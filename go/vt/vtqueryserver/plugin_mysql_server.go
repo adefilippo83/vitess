@@ -86,6 +86,7 @@ func (mh *proxyHandler) ConnectionClosed(c *mysql.Conn) {
 	}
 }
 
+<<<<<<< HEAD
 func (mh *proxyHandler) ComQuery(c *mysql.Conn, query string, callback func(*sqltypes.Result) error) error {
 	var ctx context.Context
 	var cancel context.CancelFunc
@@ -95,6 +96,12 @@ func (mh *proxyHandler) ComQuery(c *mysql.Conn, query string, callback func(*sql
 	} else {
 		ctx = context.Background()
 	}
+=======
+func (mh *proxyHandler) ComQuery(c *mysql.Conn, query string, bindVariables map[string]*querypb.BindVariable, callback func(*sqltypes.Result) error) error {
+	// FIXME(alainjobart): Add some kind of timeout to the context.
+	ctx := context.Background()
+
+>>>>>>> 0ca5d24c2... Added support for the MySQL prepare command protocol.
 	// Fill in the ImmediateCallerID with the UserData returned by
 	// the AuthServer plugin for that user. If nothing was
 	// returned, use the User. This lets the plugin map a MySQL
@@ -129,6 +136,11 @@ func (mh *proxyHandler) ComQuery(c *mysql.Conn, query string, callback func(*sql
 		return err
 	}
 
+	return callback(result)
+}
+
+func (mh *proxyHandler) ComPrepare(c *mysql.Conn, query string, bindVariables map[string]*querypb.BindVariable, callback func(*sqltypes.Result) error) error {
+	result := &sqltypes.Result{}
 	return callback(result)
 }
 
